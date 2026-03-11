@@ -1,0 +1,17 @@
+//------------------------test results----------------------//
+> labs@1.0.0 test
+> jest
+
+ PASS  services/__test__/helperService.test.ts
+ PASS  services/__test__/geocodingService.test.ts
+ PASS  services/__test__/storageService.test.ts                                                                           
+ PASS  services/__test__/nswTransportService.test.ts                                                                      
+ PASS  ui/__test__/TrafficHazardListUI.test.tsx
+ PASS  ui/__test__/TrafficHazardDetailUI.test.tsx
+
+Test Suites: 6 passed, 6 total
+Tests:       29 passed, 29 total
+Snapshots:   0 total
+Time:        4.782 s
+Ran all test suites.
+//----------------------------------------------------------//

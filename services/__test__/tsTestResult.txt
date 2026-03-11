@@ -1,0 +1,15 @@
+//------------------------test results----------------------//
+// > labs@1.0.0 test                                        //
+// > jest                                                   //
+//                                                          //
+//  PASS  services/__test__/helperService.test.ts           //
+//  PASS  services/__test__/storageService.test.ts          //
+//  PASS  services/__test__/geocodingService.test.ts        //                                                                  
+//  PASS  services/__test__/nswTransportService.test.ts     //
+//                                                          //
+// Test Suites: 4 passed, 4 total                           //
+// Tests:       21 passed, 21 total                         //
+// Snapshots:   0 total                                     //
+// Time:        1.604 s                                     //
+// Ran all test suites.                                     //
+//----------------------------------------------------------//
