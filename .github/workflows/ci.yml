@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main, github-action]
   push:
-    branches: [main, github-action]
+    branches: [main]
 
 jobs:
   test-and-lint:
@@ -61,7 +61,13 @@ jobs:
 
       - name: Build Web Version
         run: |
-          npx expo export --platform web
+          # Ensure expo-router is present if Metro is looking for it
+          npx expo install expo-router react-native-safe-area-context react-native-screens
+          
+          # Export with the --clear flag to prevent stale cache issues
+          npx expo export --platform web --clear
+          
+          # Fix for SPA routing on GitHub Pages
           cp dist/index.html dist/404.html
         env:
           EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
