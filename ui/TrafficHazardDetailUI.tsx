@@ -9,12 +9,13 @@
 
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
   ActivityIndicator,
-  TouchableOpacity,
   Alert,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -25,7 +26,7 @@ import { GeocodingService } from "../services/geocodingService";
 import { HelperService } from "../services/helperService";
 import { StorageService } from "../services/storageService";
 import { TrafficHazardFeature } from "../models/trafficHazardFeatureModel";
-import { HazardTypeMap, getHazardTypeEnum } from "../models/hazardTypeModel";
+import { getHazardTypeEnum, HazardTypeMap } from "../models/hazardTypeModel";
 //------------------------------------------------------------//
 
 export const TrafficHazardDetail = () => {
@@ -95,9 +96,23 @@ export const TrafficHazardDetail = () => {
       setSaving(true);
       const updated = await StorageService.addHazard(hazards, hazard);
       setHazards(updated);
+
+      // Optional: Success feedback
+      const msg = "Hazard saved successfully!";
+      if (Platform.OS === "web") {
+        window.alert(msg);
+      } else {
+        Alert.alert("Success", msg);
+      }
     } catch (error) {
       console.error("Save failed:", error);
-      Alert.alert("Error", "Failed to save hazard.");
+
+      const errorMsg = "Failed to save hazard.";
+      if (Platform.OS === "web") {
+        window.alert(errorMsg);
+      } else {
+        Alert.alert("Error", errorMsg);
+      }
     } finally {
       setSaving(false);
     }
@@ -126,11 +141,9 @@ export const TrafficHazardDetail = () => {
             style={{ padding: 4 }}
             disabled={saving}
           >
-            {saving ? (
-              <ActivityIndicator size="small" />
-            ) : (
-              <MaterialIcons name="save" size={22} color="#1976D2" />
-            )}
+            {saving
+              ? <ActivityIndicator size="small" />
+              : <MaterialIcons name="save" size={22} color="#1976D2" />}
           </TouchableOpacity>
         </View>
 
@@ -164,11 +177,13 @@ export const TrafficHazardDetail = () => {
         {/* ---GPS address--- */}
         <View style={{ marginTop: 10 }}>
           <Text style={{ fontWeight: "bold" }}>Address (based on GPS):</Text>
-          {loading ? (
-            <ActivityIndicator size="small" />
-          ) : (
-            <Text style={styles.hazardDesc}>{addr || "Address not found"}</Text>
-          )}
+          {loading
+            ? <ActivityIndicator size="small" />
+            : (
+              <Text style={styles.hazardDesc}>
+                {addr || "Address not found"}
+              </Text>
+            )}
         </View>
 
         {/* ---dates--- */}
