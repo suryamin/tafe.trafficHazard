@@ -26,3 +26,5 @@ jobs:
 
       - name: Deploy all functions
         run: supabase functions deploy --project-ref $PROJECT_ID
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
