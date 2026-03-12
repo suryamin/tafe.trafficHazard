@@ -31,6 +31,7 @@ jobs:
   deploy-web:
     needs: test-and-lint
     runs-on: ubuntu-latest
+    # Only deploy on push to main or github-action
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/github-action')
     permissions:
       contents: write
@@ -47,19 +48,24 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Install Web Dependencies
+        run: npm install react-dom react-native-web --save
+
       - name: Build Web
         env:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          # 1. Build the app
+          # 1. Build the app for web
           EXPO_USE_STATIC=false npx expo export --platform web --clear
 
           # 2. Fix the HTML script tags (Using relative paths for GH Pages)
+          # This ensures the browser looks for files in ./ instead of /
           sed -i 's|src="/_expo|src="./_expo|g' dist/index.html
           sed -i 's|href="/_expo|href="./_expo|g' dist/index.html
 
           # 3. Fix Asset Paths in the JS bundles
+          # This helps images and scripts load correctly on a sub-path URL
           grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"./assets/|g' @ || true
           grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"./_expo/static/assets/|g' @ || true
 
