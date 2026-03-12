@@ -61,24 +61,20 @@ jobs:
 
       - name: Build Web Version
         run: |
-          # 1. Clear caches
+          # 1. Nuke old builds
           rm -rf .expo dist
           
-          # 2. Export the web files
+          # 2. Export with NO base path (defaults to /)
           npx expo export --platform web --clear
           
-          # 3. MANUALLY FIX PATHS: This replaces src="/ with src="
-          # This changes absolute paths to relative paths in the index file
+          # 3. Aggressive Path Fix: 
+          # This removes ANY leading slash from src= or href= attributes
+          # so they become relative to the current folder.
           sed -i 's/src="\//src="/g' dist/index.html
           sed -i 's/href="\//href="/g' dist/index.html
           
           # 4. Create the 404 redirect
           cp dist/index.html dist/404.html
-        env:
-          NODE_ENV: production
-          # We provide both just to be safe with different Expo versions
-          EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
-          PUBLIC_URL: /tafe.trafficHazard/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
