@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - "github action"
+      - "github-action"
   workflow_dispatch: # Allows you to run it manually from the Actions tab
 
 jobs:
