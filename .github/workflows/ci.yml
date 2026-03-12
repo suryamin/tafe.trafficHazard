@@ -33,6 +33,7 @@ jobs:
       - name: Run Unit Tests
         run: npm test --if-present
         env:
+          # Note: Ensure these matches your GitHub Secrets exactly
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
@@ -41,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     permissions:
-      contents: write # Needed to push to gh-pages branch
+      contents: write # Explicitly required to create/push the gh-pages branch
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -55,13 +56,14 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Install Web Dependencies
+      - name: Install Expo Web Dependencies
+        # This ensures the CI runner has the web-bundling tools required by Expo
         run: npx expo install react-dom react-native-web
-        
+
       - name: Build Web Version
-        # This creates the 'dist' folder with the correct pathing
         run: npx expo export --platform web
         env:
+          # Verify this matches your GitHub repo name exactly
           EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
 
       - name: Deploy to GitHub Pages
@@ -69,5 +71,5 @@ jobs:
         with:
           folder: dist
           branch: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }} # Explicitly add this
+          token: ${{ secrets.GITHUB_TOKEN }}
           clean: true
