@@ -7,32 +7,41 @@
 // use    : test runner                              //
 // npm    : react-native-gesture-handler             //
 //---------------------------------------------------//
-
 import "react-native-gesture-handler/jestSetup";
 
-// Mock AsyncStorage (Essential for your StorageService)
-jest.mock("@react-native-async-storage/async-storage", () =>
-  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
+// 1. Mock AsyncStorage
+jest.mock(
+  "@react-native-async-storage/async-storage",
+  () =>
+    require(
+      "@react-native-async-storage/async-storage/jest/async-storage-mock",
+    ),
 );
 
-// Mocking the Alert module specifically
-jest.mock("react-native/Libraries/Alert/Alert", () => ({
-  alert: jest.fn(),
-}));
+// 2. UNIVERSAL ALERT MOCK (Fixes the "undefined reading alert" error)
+jest.mock("react-native", () => {
+  const RN = jest.requireActual("react-native");
+  RN.Alert.alert = jest.fn();
+  return RN;
+});
 
-// Optional: Silence certain logs that clutter test output
-jest.spyOn(console, "log").mockImplementation(() => {});
-jest.spyOn(console, "error").mockImplementation(() => {});
+// 3. Mock window.alert for the GitHub Web / browser branch
+global.window = global.window || {};
+global.window.alert = jest.fn();
 
-// This prevents the "Cannot find module 'expo-asset'" error
+// 4. Mock Icons (Fixes expo-asset errors)
 jest.mock("@expo/vector-icons", () => {
   const React = require("react");
   const { Text } = require("react-native");
-  // We return a simple Text component that just renders the icon name
   return {
     MaterialIcons: ({ name, ...props }) =>
       React.createElement(Text, props, name),
     Ionicons: ({ name, ...props }) => React.createElement(Text, props, name),
-    // Add any other icon sets you use here
+    MaterialCommunityIcons: ({ name, ...props }) =>
+      React.createElement(Text, props, name),
   };
 });
+
+// 5. Cleanup logs
+jest.spyOn(console, "log").mockImplementation(() => {});
+// Keep console.error enabled just in case something else breaks!
