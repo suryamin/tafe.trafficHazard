@@ -29,60 +29,22 @@ export class StorageService {
     }
   }
 
-  // static async addHazard(
-  //   list: TrafficHazardFeature[],
-  //   hazard: TrafficHazardFeature,
-  // ): Promise<TrafficHazardFeature[]> {
-  //   try {
-  //     const exists = list.some((item) => item.id === hazard.id);
-  //     if (exists) {
-  //       Alert.alert(
-  //         "Already Saved",
-  //         "This hazard is already in your storage.",
-  //         [{ text: "OK" }],
-  //       );
-  //       return list;
-  //     } else {
-  //       Alert.alert("Success", "Hazard saved successfully.");
-  //     }
-  //     const updatedList = [...list, hazard];
-  //     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
-  //     return updatedList;
-  //   } catch (e) {
-  //     console.log("addHazard error:", e);
-  //     return list;
-  //   }
-  // }
-
   static async addHazard(
     list: TrafficHazardFeature[],
     hazard: TrafficHazardFeature,
   ): Promise<TrafficHazardFeature[]> {
     try {
       const exists = list.some((item) => item.id === hazard.id);
-
       if (exists) {
-        const title = "Already Saved";
-        const message = "This hazard is already in your storage.";
-
-        if (Platform.OS === "web") {
-          window.alert(`${title}\n${message}`);
-        } else {
-          Alert.alert(title, message, [{ text: "OK" }]);
-        }
+        Alert.alert(
+          "Already Saved",
+          "This hazard is already in your storage.",
+          [{ text: "OK" }],
+        );
         return list;
-      }
-
-      // Logic for Success
-      const successTitle = "Success";
-      const successMsg = "Hazard saved successfully.";
-
-      if (Platform.OS === "web") {
-        window.alert(`${successTitle}\n${successMsg}`);
       } else {
-        Alert.alert(successTitle, successMsg);
+        Alert.alert("Success", "Hazard saved successfully.");
       }
-
       const updatedList = [...list, hazard];
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
       return updatedList;
@@ -91,6 +53,44 @@ export class StorageService {
       return list;
     }
   }
+
+  // static async addHazard(
+  //   list: TrafficHazardFeature[],
+  //   hazard: TrafficHazardFeature,
+  // ): Promise<TrafficHazardFeature[]> {
+  //   try {
+  //     const exists = list.some((item) => item.id === hazard.id);
+
+  //     if (exists) {
+  //       const title = "Already Saved";
+  //       const message = "This hazard is already in your storage.";
+
+  //       if (Platform.OS === "web") {
+  //         window.alert(`${title}\n${message}`);
+  //       } else {
+  //         Alert.alert(title, message, [{ text: "OK" }]);
+  //       }
+  //       return list;
+  //     }
+
+  //     // Logic for Success
+  //     const successTitle = "Success";
+  //     const successMsg = "Hazard saved successfully.";
+
+  //     if (Platform.OS === "web") {
+  //       window.alert(`${successTitle}\n${successMsg}`);
+  //     } else {
+  //       Alert.alert(successTitle, successMsg);
+  //     }
+
+  //     const updatedList = [...list, hazard];
+  //     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
+  //     return updatedList;
+  //   } catch (e) {
+  //     console.log("addHazard error:", e);
+  //     return list;
+  //   }
+  // }
 
   static async deleteHazard(
     id: string | number,
