@@ -52,21 +52,13 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          # 1. Build the app
-          EXPO_USE_STATIC=false npx expo export --platform web --clear
-
-          # 2. Fix the HTML script tags (Remove the leading slash)
-          sed -i 's|src="/_expo|src="./_expo|g' dist/index.html
-          sed -i 's|href="/_expo|href="./_expo|g' dist/index.html
-
-          # 3. FIX THE ASSETS (Remove leading slash from the replacement)
-          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"tafe.trafficHazard/assets/|g' @ || true
-          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"tafe.trafficHazard/_expo/static/assets/|g' @ || true
-
-          # 4. Critical: Prevent GitHub from hiding folders
+          # Expo will now automatically use the baseUrl from app.json
+          npx expo export --platform web --clear
+          
+          # Tell GitHub NOT to ignore the _expo folder
           touch dist/.nojekyll
           
-          # 5. Create 404 redirect
+          # Support direct URL navigation
           cp dist/index.html dist/404.html
 
       - name: Deploy to GitHub Pages

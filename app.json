@@ -30,7 +30,7 @@
       "favicon": "./assets/favicon.png"
     },
     "experiments": {
-      "baseUrl": ""
+      "baseUrl": "/tafe.trafficHazard"
     },
     "plugins": [
       "@react-native-community/datetimepicker"
