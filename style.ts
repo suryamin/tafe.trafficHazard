@@ -197,34 +197,15 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
   },
-  datePickerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white", // Matches dropdown background
-    borderWidth: 1, // Matches dropdown border width
-    borderColor: "#CCCCCC", // Standard neutral border color
-    borderRadius: 8,
+  dateButton: {
+    backgroundColor: "#fff",
     padding: 12,
-    marginTop: 5,
-    minHeight: 50, // Ensures height matches DropDownPicker
-  },
-
-  // New style for the web input container to match mobile
-  webDateInputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: "#CCCCCC",
     borderRadius: 8,
-    paddingHorizontal: 10,
-    marginTop: 5,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
-
-  // Helper for text inside the date button
-  dateButtonText: {
-    fontSize: 16,
-    color: "#333333",
-    marginLeft: 10,
+  dateText: {
+    fontSize: 14,
+    color: "#333",
   },
 });

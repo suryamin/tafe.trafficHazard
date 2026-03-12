@@ -7,15 +7,12 @@
 // npm    : react-native-dropdown-picker              //
 //          @expo/vector-icons                        //
 //          react-native-modal-datetime-picker        //
-//          npx expo install react-native-paper       //
-//          react-native-paper-dates                  //
 //----------------------------------------------------//
 
 import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Platform,
   Text,
   TouchableOpacity,
   View,
@@ -25,12 +22,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import DropDownPicker from "react-native-dropdown-picker";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  DatePickerModal,
-  en,
-  registerTranslation,
-} from "react-native-paper-dates";
-import { PaperProvider } from "react-native-paper";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 //------------------------------------------------------------//
 import { RootStackParamList } from "./App";
 import { NswRegionMap, NswRegionModel } from "./models/nswRegionsModel";
@@ -124,14 +116,17 @@ export const HomeScreen = () => {
   });
 
   //---date time dropdown---//
-  const showDatePicker = () => setDatePickerVisible(true);
-  const hideDatePicker = () => setDatePickerVisible(false);
+  const showDatePicker = () => {
+    setDatePickerVisible(true);
+  };
 
-  const handleConfirm = (params: any) => {
+  const hideDatePicker = () => {
+    setDatePickerVisible(false);
+  };
+
+  const handleConfirm = (date: Date) => {
+    setSelectedDate(date);
     hideDatePicker();
-    if (params.date) {
-      setSelectedDate(params.date);
-    }
   };
 
   //---execute (submit)---//
@@ -175,164 +170,119 @@ export const HomeScreen = () => {
   };
 
   return (
-    <PaperProvider>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          {/* ---header--- */}
-          <Text style={styles.headerTitle}>NSW Traffic Hazard</Text>
-          <Text style={styles.headerSubtitle}>Real-time traffic updates</Text>
+    <View style={styles.container}>
+      <View style={styles.content}>
+        {/* ---header--- */}
+        <Text style={styles.headerTitle}>NSW Traffic Hazard</Text>
+        <Text style={styles.headerSubtitle}>Real-time traffic updates</Text>
 
-          <View style={styles.cardContainer}>
-            {/* ---saved hazard to storage--- */}
-            <TouchableOpacity
-              style={styles.card}
-              onPress={() => {
-                console.log("Saved Hazards pressed");
-                if (hazards.length > 0) {
-                  navigation.navigate("HazardList", {
-                    hazards,
-                    fromStorage: true,
-                  });
-                } else {
-                  Alert.alert("No Saved Data", "No stored hazards found.");
-                }
-              }}
-            >
-              <MaterialIcons name="save" size={28} color="#1976D2" />
-              <Text style={styles.cardTitle}>My Incidents</Text>
-              <Text style={styles.cardSubtitle}>
-                {hazards.length} items stored
-              </Text>
-            </TouchableOpacity>
-
-            {/* ---clear hazard storage--- */}
-            <TouchableOpacity
-              style={styles.card}
-              onPress={async () => {
-                try {
-                  await StorageService.clearAll();
-                  const updated = await StorageService.loadHazard();
-                  setHazards(updated);
-                  Alert.alert("Success", "All saved hazards cleared");
-                } catch (error) {
-                  console.log("Clear error:", error);
-                  Alert.alert("Error", "Failed to clear storage.");
-                }
-              }}
-            >
-              <MaterialIcons name="history" size={28} color="#388E3C" />
-              <Text style={styles.cardTitle}>Quick Clear</Text>
-              <Text style={styles.cardSubtitle}>Clear my incident</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* ---region dropdown--- */}
-          <View style={[styles.inputGroup, { zIndex: 3000 }]}>
-            <Text style={styles.label}>NSW Region</Text>
-            <DropDownPicker
-              open={regionOpen}
-              value={selectedRegion}
-              items={regionItems}
-              setOpen={setRegionOpen}
-              setValue={setSelectedRegion}
-              listMode="SCROLLVIEW"
-              autoScroll={true}
-              dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
-              style={styles.dropdown}
-              placeholder="Select Region"
-              onOpen={() => setHazardOpen(false)}
-            />
-          </View>
-
-          {/* ---hazard dropdown--- */}
-          <View style={[styles.inputGroup, { zIndex: 2000 }]}>
-            <Text style={styles.label}>Hazard Type</Text>
-            <DropDownPicker
-              open={hazardOpen}
-              value={selectedHazard}
-              items={hazardItems}
-              setOpen={setHazardOpen}
-              setValue={setSelectedHazard}
-              style={styles.dropdown}
-              listMode="SCROLLVIEW"
-              autoScroll={true}
-              dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
-              placeholder="Select Hazard"
-              onOpen={() => setRegionOpen(false)} // Close other dropdown if this opens
-            />
-          </View>
-
-          {/* ---date time picker--- */}
-
-          <View style={[styles.inputGroup, { zIndex: 1000 }]}>
-            <Text style={styles.label}>Select Date</Text>
-
-            {Platform.OS === "web"
-              ? (
-                /* --- WEB VERSION --- */
-                <View style={styles.webDateInputContainer}>
-                  <MaterialIcons name="calendar-today" size={20} color="#666" />
-                  <input
-                    type="date"
-                    defaultValue={selectedDate.toISOString().split("T")[0]}
-                    onChange={(e) => {
-                      const d = new Date(e.target.value);
-                      if (!isNaN(d.getTime())) setSelectedDate(d);
-                    }}
-                    style={{
-                      padding: "12px",
-                      border: "none",
-                      outline: "none",
-                      fontSize: "16px",
-                      width: "100%",
-                      backgroundColor: "transparent",
-                      fontFamily: "inherit",
-                      color: "#333",
-                    }}
-                  />
-                </View>
-              )
-              : (
-                /* --- MOBILE VERSION --- */
-                <>
-                  <TouchableOpacity
-                    style={styles.datePickerButton}
-                    onPress={showDatePicker}
-                  >
-                    <MaterialIcons
-                      name="calendar-today"
-                      size={20}
-                      color="#388E3C"
-                    />
-                    <Text style={styles.dateButtonText}>
-                      {selectedDate.toLocaleDateString()}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <DatePickerModal
-                    locale="en"
-                    mode="single"
-                    visible={isDatePickerVisible}
-                    onDismiss={hideDatePicker}
-                    date={selectedDate}
-                    onConfirm={handleConfirm}
-                  />
-                </>
-              )}
-          </View>
-
-          {/* ---submit button--- */}
+        <View style={styles.cardContainer}>
+          {/* ---saved hazard to storage--- */}
           <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleCheckHazards}
-            disabled={loading}
+            style={styles.card}
+            onPress={() => {
+              console.log("Saved Hazards pressed");
+              if (hazards.length > 0) {
+                navigation.navigate("HazardList", {
+                  hazards,
+                  fromStorage: true,
+                });
+              } else {
+                Alert.alert("No Saved Data", "No stored hazards found.");
+              }
+            }}
           >
-            {loading
-              ? <ActivityIndicator color="#fff" />
-              : <Text style={styles.buttonText}>Check Hazards</Text>}
+            <MaterialIcons name="save" size={28} color="#1976D2" />
+            <Text style={styles.cardTitle}>My Incidents</Text>
+            <Text style={styles.cardSubtitle}>
+              {hazards.length} items stored
+            </Text>
+          </TouchableOpacity>
+
+          {/* ---clear hazard storage--- */}
+          <TouchableOpacity
+            style={styles.card}
+            onPress={async () => {
+              try {
+                await StorageService.clearAll();
+                const updated = await StorageService.loadHazard();
+                setHazards(updated);
+                Alert.alert("Success", "All saved hazards cleared");
+              } catch (error) {
+                console.log("Clear error:", error);
+                Alert.alert("Error", "Failed to clear storage.");
+              }
+            }}
+          >
+            <MaterialIcons name="history" size={28} color="#388E3C" />
+            <Text style={styles.cardTitle}>Quick Clear</Text>
+            <Text style={styles.cardSubtitle}>Clear my incident</Text>
           </TouchableOpacity>
         </View>
+
+        {/* ---region dropdown--- */}
+        <View style={[styles.inputGroup, { zIndex: 3000 }]}>
+          <Text style={styles.label}>NSW Region</Text>
+          <DropDownPicker
+            open={regionOpen}
+            value={selectedRegion}
+            items={regionItems}
+            setOpen={setRegionOpen}
+            setValue={setSelectedRegion}
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
+            style={styles.dropdown}
+            placeholder="Select Region"
+            onOpen={() => setHazardOpen(false)}
+          />
+        </View>
+
+        {/* ---hazard dropdown--- */}
+        <View style={[styles.inputGroup, { zIndex: 2000 }]}>
+          <Text style={styles.label}>Hazard Type</Text>
+          <DropDownPicker
+            open={hazardOpen}
+            value={selectedHazard}
+            items={hazardItems}
+            setOpen={setHazardOpen}
+            setValue={setSelectedHazard}
+            style={styles.dropdown}
+            listMode="SCROLLVIEW"
+            autoScroll={true}
+            dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
+            placeholder="Select Hazard"
+            onOpen={() => setRegionOpen(false)} // Close other dropdown if this opens
+          />
+        </View>
+
+        {/* ---date time picker--- */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Select Date & Time</Text>
+
+          <TouchableOpacity style={styles.dateButton} onPress={showDatePicker}>
+            <Text style={styles.dateText}>{selectedDate.toLocaleString()}</Text>
+          </TouchableOpacity>
+
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="datetime"
+            onConfirm={handleConfirm}
+            onCancel={hideDatePicker}
+          />
+        </View>
+
+        {/* ---submit button--- */}
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleCheckHazards}
+          disabled={loading}
+        >
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.buttonText}>Check Hazards</Text>}
+        </TouchableOpacity>
       </View>
-    </PaperProvider>
+    </View>
   );
 };

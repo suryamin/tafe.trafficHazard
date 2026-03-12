@@ -1,12 +1,13 @@
 {
   "expo": {
     "name": "NSW Traffic Hazard",
-    "slug": "NSW Traffic Hazard",
+    "slug": "nsw-traffic-hazard",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "assetBundlePatterns": ["**/*"],
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -24,13 +25,15 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
+      "bundler": "metro",
+      "output": "export",
       "favicon": "./assets/favicon.png"
+    },
+    "experiments": {
+      "baseUrl": ""
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ],
-    "experiments": {
-      "baseUrl": "/tafe.trafficHazard"
-    }
+    ]
   }
 }
