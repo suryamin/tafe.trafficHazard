@@ -61,14 +61,18 @@ jobs:
 
       - name: Build Web Version
         run: |
-          # 1. Clear any local expo/metro caches that might be sticking around
-          rm -rf .expo
+          # 1. Clear caches
+          rm -rf .expo dist
           
-          # 2. Run the export with the base path set explicitly for the bundler
-          # We use CROSS-ENV style inline setting to ensure it's picked up
-          EXPO_PUBLIC_BASE_PATH=/tafe.trafficHazard/ npx expo export --platform web --clear
+          # 2. Export the web files
+          npx expo export --platform web --clear
           
-          # 3. Create the 404.html for routing support
+          # 3. MANUALLY FIX PATHS: This replaces src="/ with src="
+          # This changes absolute paths to relative paths in the index file
+          sed -i 's/src="\//src="/g' dist/index.html
+          sed -i 's/href="\//href="/g' dist/index.html
+          
+          # 4. Create the 404 redirect
           cp dist/index.html dist/404.html
         env:
           NODE_ENV: production
