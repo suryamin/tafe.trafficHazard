@@ -9,13 +9,14 @@
 //          react-native-modal-datetime-picker        //
 //----------------------------------------------------//
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -47,10 +48,12 @@ export const HomeScreen = () => {
   const [hazardOpen, setHazardOpen] = useState(false);
 
   //---states for Selection---//
-  const [selectedRegion, setSelectedRegion] =
-    useState<NswRegionModel>("Sydney");
-  const [selectedHazard, setSelectedHazard] =
-    useState<HazardTypeModel>("incident");
+  const [selectedRegion, setSelectedRegion] = useState<NswRegionModel>(
+    "Sydney",
+  );
+  const [selectedHazard, setSelectedHazard] = useState<HazardTypeModel>(
+    "incident",
+  );
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
@@ -147,7 +150,9 @@ export const HomeScreen = () => {
       if (!features || features.length === 0) {
         Alert.alert(
           "No Data",
-          `No ${HazardTypeMap[selectedHazard].label} hazards found in ${selectedRegion}.`,
+          `No ${
+            HazardTypeMap[selectedHazard].label
+          } hazards found in ${selectedRegion}.`,
         );
         return;
       }
@@ -253,7 +258,8 @@ export const HomeScreen = () => {
         </View>
 
         {/* ---date time picker--- */}
-        <View style={styles.inputGroup}>
+        {
+          /* <View style={styles.inputGroup}>
           <Text style={styles.label}>Select Date & Time</Text>
 
           <TouchableOpacity style={styles.dateButton} onPress={showDatePicker}>
@@ -266,6 +272,58 @@ export const HomeScreen = () => {
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
           />
+        </View> */
+        }
+
+        <View style={styles.datePickerContainer}>
+          {Platform.OS === "web"
+            ? (
+              /* WEB VERSION: Uses standard CSS properties */
+              <input
+                type="date"
+                style={{
+                  padding: "10px",
+                  marginTop: "10px", // Fixed: marginVertical -> marginTop/marginBottom
+                  marginBottom: "10px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  width: "100%",
+                  fontSize: "16px",
+                  fontFamily: "inherit", // Ensures font matches the app
+                }}
+                // Formats date to YYYY-MM-DD which is required for HTML inputs
+                value={selectedDate.toISOString().split("T")[0]}
+                onChange={(e) => {
+                  const newDate = new Date(e.target.value);
+                  if (!isNaN(newDate.getTime())) {
+                    handleConfirm(newDate);
+                  }
+                }}
+              />
+            )
+            : (
+              /* MOBILE VERSION: Uses React Native styles */
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setDatePickerVisible(true)}
+              >
+                <Text style={styles.dateText}>
+                  {selectedDate.toLocaleDateString()}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+          {/* This modal remains for Android/iOS support */}
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              setDatePickerVisible(false);
+              handleConfirm(date);
+            }}
+            onCancel={() => setDatePickerVisible(false)}
+            date={selectedDate}
+          />
         </View>
 
         {/* ---submit button--- */}
@@ -274,11 +332,9 @@ export const HomeScreen = () => {
           onPress={handleCheckHazards}
           disabled={loading}
         >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Check Hazards</Text>
-          )}
+          {loading
+            ? <ActivityIndicator color="#fff" />
+            : <Text style={styles.buttonText}>Check Hazards</Text>}
         </TouchableOpacity>
       </View>
     </View>

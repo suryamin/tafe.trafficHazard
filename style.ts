@@ -197,15 +197,21 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
   },
+  datePickerContainer: {
+    zIndex: 1000, // Crucial for Web to stay above the map
+    elevation: 5, // For Android shadows
+    width: "90%", // Adjust based on your UI
+    alignSelf: "center",
+    marginVertical: 10,
+  },
   dateButton: {
-    backgroundColor: "#fff",
+    backgroundColor: "#007AFF",
     padding: 12,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    alignItems: "center",
   },
   dateText: {
-    fontSize: 14,
-    color: "#333",
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
 });
