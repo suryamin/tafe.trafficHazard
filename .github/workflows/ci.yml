@@ -61,9 +61,11 @@ jobs:
         run: npx expo install react-dom react-native-web
 
       - name: Build Web Version
-        run: npx expo export --platform web
+        run: |
+          npx expo export --platform web
+          # This command lists the files to prove they exist
+          ls -R dist 
         env:
-          # Verify this matches your GitHub repo name exactly
           EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
 
       - name: Deploy to GitHub Pages
@@ -72,4 +74,4 @@ jobs:
           folder: dist
           branch: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}
-          clean: true
+          single-commit: true # Force creates the branch if it doesn't exist
