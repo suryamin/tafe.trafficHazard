@@ -55,6 +55,9 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Install Web Dependencies
+        run: npx expo install react-dom react-native-web
+        
       - name: Build Web Version
         # This creates the 'dist' folder with the correct pathing
         run: npx expo export --platform web
