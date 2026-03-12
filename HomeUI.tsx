@@ -13,6 +13,7 @@ import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   Text,
   TouchableOpacity,
   View,
@@ -257,7 +258,8 @@ export const HomeScreen = () => {
         </View>
 
         {/* ---date time picker--- */}
-        <View style={styles.inputGroup}>
+        {
+          /* <View style={styles.inputGroup}>
           <Text style={styles.label}>Select Date & Time</Text>
 
           <TouchableOpacity style={styles.dateButton} onPress={showDatePicker}>
@@ -269,6 +271,61 @@ export const HomeScreen = () => {
             mode="datetime"
             onConfirm={handleConfirm}
             onCancel={hideDatePicker}
+          />
+        </View> */
+        }
+
+        <View style={[styles.inputGroup, { zIndex: 1000 }]}>
+          <Text style={styles.label}>Select Date</Text>
+
+          <View style={styles.datePickerContainer}>
+            {/* Green Icon from your style.ts */}
+            <MaterialIcons name="calendar-today" size={20} color="#388E3C" />
+
+            {Platform.OS === "web"
+              ? (
+                /* --- WEB: Native HTML Date Picker --- */
+                <input
+                  type="date"
+                  style={{
+                    flex: 1,
+                    border: "none",
+                    outline: "none",
+                    fontSize: "16px",
+                    marginLeft: 10,
+                    backgroundColor: "transparent",
+                    color: "#333",
+                  }}
+                  value={selectedDate.toISOString().split("T")[0]}
+                  onChange={(e) => {
+                    const d = new Date(e.target.value);
+                    if (!isNaN(d.getTime())) setSelectedDate(d);
+                  }}
+                />
+              )
+              : (
+                /* --- MOBILE: Touchable to open Modal --- */
+                <TouchableOpacity
+                  style={{ flex: 1, height: "100%", justifyContent: "center" }}
+                  onPress={showDatePicker}
+                >
+                  <Text style={styles.dateText}>
+                    {selectedDate.toLocaleDateString()}
+                  </Text>
+                </TouchableOpacity>
+              )}
+          </View>
+
+          {/* This only triggers on Mobile (Android/iOS) */}
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              handleConfirm(date);
+              hideDatePicker();
+            }}
+            onCancel={hideDatePicker}
+            date={selectedDate}
           />
         </View>
 

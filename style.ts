@@ -197,6 +197,18 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
   },
+  datePickerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF", // Ensures it's white
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    height: 50, // Matches standard Expo/React Native input height
+    marginTop: 5,
+    width: "100%",
+  },
   dateButton: {
     backgroundColor: "#fff",
     padding: 12,
