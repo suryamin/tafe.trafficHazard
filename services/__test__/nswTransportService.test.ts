@@ -48,7 +48,8 @@ describe("NswTransportService", () => {
   //--------------------//
   //---initialization---//
   //--------------------//
-  const mockFunctionUrl = "https://frlpitizjnrfvrrysowg.supabase.co/functions/v1/get-hazard";
+  const mockFunctionUrl =
+    "https://frlpitizjnrfvrrysowg.supabase.co/functions/v1/get-hazard";
   const mockAnonKey = "sb_publishable_u5NU_wiNoDX72v_uW-p3Kw_-jywt0ue";
 
   beforeEach(() => {
@@ -64,22 +65,27 @@ describe("NswTransportService", () => {
     const results = await NswTransportService.fetchTrafficHazardApi(
       "Sydney",
       "incident",
-      mockDate
+      mockDate,
     );
 
     // 3. Assertions
     // Check if axios was called with correct Supabase URL and Headers
-    expect(mockedAxios.get).toHaveBeenCalledWith(mockFunctionUrl, expect.objectContaining({
-      headers: {
-        Authorization: `apikey ${mockAnonKey}`,
-        Accept: "application/json",
-        "User-Agent": "MyTrafficApp/1.0",
-      },
-      params: {
-        hazardType: "incident",
-        region: "Sydney"
-      }
-    }));
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      mockFunctionUrl,
+      expect.objectContaining({
+        headers: {
+          "apikey": mockAnonKey,
+          "Authorization": `Bearer ${mockAnonKey}`, // New format
+          "Accept": "application/json",
+          "User-Agent": "MyTrafficApp/1.0",
+        },
+        params: {
+          hazardType: "incident",
+          region: "Sydney",
+        },
+        timeout: 15000, // Add this to match the code too
+      }),
+    );
 
     // Check if filtering worked (only 1 item should remain)
     expect(results.length).toBe(1);
@@ -93,7 +99,7 @@ describe("NswTransportService", () => {
     const results = await NswTransportService.fetchTrafficHazardApi(
       "Sydney",
       "incident",
-      new Date()
+      new Date(),
     );
 
     expect(results).toEqual([]);
