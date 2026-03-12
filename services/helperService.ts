@@ -7,6 +7,7 @@
 // use    : helper function                          //
 //---------------------------------------------------//
 
+import { Alert, Platform } from "react-native";
 import { categoryIcon } from "../models/categoryIconModel";
 //------------------------------------------------------------//
 
@@ -92,8 +93,8 @@ export class HelperService {
     }
 
     //--Build final sentence---/
-    const fullSentence =
-      `${qualifier} ${locationText}, ${suburb} ${direction}`.trim();
+    const fullSentence = `${qualifier} ${locationText}, ${suburb} ${direction}`
+      .trim();
 
     //--Remove double spaces and capitalize first letter---/
     return fullSentence

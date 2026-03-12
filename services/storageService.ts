@@ -8,7 +8,7 @@
 // npm    : @react-native-async-storage/async-storage//
 //---------------------------------------------------//
 
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 //------------------------------------------------------------//
 import { TrafficHazardFeature } from "../models/trafficHazardFeatureModel";
@@ -29,22 +29,60 @@ export class StorageService {
     }
   }
 
+  // static async addHazard(
+  //   list: TrafficHazardFeature[],
+  //   hazard: TrafficHazardFeature,
+  // ): Promise<TrafficHazardFeature[]> {
+  //   try {
+  //     const exists = list.some((item) => item.id === hazard.id);
+  //     if (exists) {
+  //       Alert.alert(
+  //         "Already Saved",
+  //         "This hazard is already in your storage.",
+  //         [{ text: "OK" }],
+  //       );
+  //       return list;
+  //     } else {
+  //       Alert.alert("Success", "Hazard saved successfully.");
+  //     }
+  //     const updatedList = [...list, hazard];
+  //     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
+  //     return updatedList;
+  //   } catch (e) {
+  //     console.log("addHazard error:", e);
+  //     return list;
+  //   }
+  // }
+
   static async addHazard(
     list: TrafficHazardFeature[],
     hazard: TrafficHazardFeature,
   ): Promise<TrafficHazardFeature[]> {
     try {
       const exists = list.some((item) => item.id === hazard.id);
+
       if (exists) {
-        Alert.alert(
-          "Already Saved",
-          "This hazard is already in your storage.",
-          [{ text: "OK" }],
-        );
+        const title = "Already Saved";
+        const message = "This hazard is already in your storage.";
+
+        if (Platform.OS === "web") {
+          window.alert(`${title}\n${message}`);
+        } else {
+          Alert.alert(title, message, [{ text: "OK" }]);
+        }
         return list;
-      } else {
-        Alert.alert("Success", "Hazard saved successfully.");
       }
+
+      // Logic for Success
+      const successTitle = "Success";
+      const successMsg = "Hazard saved successfully.";
+
+      if (Platform.OS === "web") {
+        window.alert(`${successTitle}\n${successMsg}`);
+      } else {
+        Alert.alert(successTitle, successMsg);
+      }
+
       const updatedList = [...list, hazard];
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
       return updatedList;
