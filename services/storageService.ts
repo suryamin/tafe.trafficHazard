@@ -104,6 +104,7 @@ export class StorageService {
 
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedList));
 
+      
       return updatedList;
     } catch (e) {
       console.log("deleteHazard error:", e);

@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, github-action]
   pull_request:
-    branches: [main]
+    branches: [main, github-action]
 
 jobs:
   test-and-lint:
