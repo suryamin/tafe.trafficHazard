@@ -62,7 +62,7 @@ jobs:
       - name: Build Web Version
         run: |
           npx expo export --platform web
-          ls -R dist 
+          cp dist/index.html dist/404.html
         env:
           EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
 
