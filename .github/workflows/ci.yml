@@ -55,20 +55,18 @@ jobs:
           # 1. Build the app
           EXPO_USE_STATIC=false npx expo export --platform web --clear
 
-          # 2. Fix the HTML script tags (Remove the leading slash)
+          # 2. Fix the HTML script tags (Using relative paths for GH Pages)
           sed -i 's|src="/_expo|src="./_expo|g' dist/index.html
           sed -i 's|href="/_expo|href="./_expo|g' dist/index.html
 
-          # 3. FIX THE ASSETS (Remove leading slash from the replacement)
-          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"tafe.trafficHazard/assets/|g' @ || true
-          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"tafe.trafficHazard/_expo/static/assets/|g' @ || true
+          # 3. Fix Asset Paths in the JS bundles
+          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"./assets/|g' @ || true
+          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"./_expo/static/assets/|g' @ || true
 
-          # 4. Critical: Prevent GitHub from hiding folders
+          # 4. Deployment preparation
           touch dist/.nojekyll
-          
-          # 5. Create 404 redirect
           cp dist/index.html dist/404.html
-
+          
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
