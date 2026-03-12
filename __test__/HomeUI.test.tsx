@@ -12,9 +12,10 @@
 // run    : npx jest --clearCache                                       //
 //          npm test                                                    //
 //----------------------------------------------------------------------//
-import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import React, { ReactNode } from "react";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { Alert } from "react-native";
+import "react-native-gesture-handler/jestSetup";
 import { HomeScreen } from "../HomeUI";
 import { StorageService } from "../services/storageService";
 import { NswTransportService } from "../services/nswTransportService";
@@ -93,12 +94,30 @@ jest.mock("react-native-dropdown-picker", () => {
 });
 
 // --- 6. DATE TIME PICKER MOCK ---
-// Since we don't want to test the internal logic of the picker, we mock it as a simple View
-jest.mock("react-native-modal-datetime-picker", () => {
-  const React = require("react");
-  return (props: any) =>
-    React.createElement("View", { testID: "date-picker-mock" });
+jest.mock("react-native-safe-area-context", () => {
+  const inset = { top: 0, right: 0, bottom: 0, left: 0 };
+  return {
+    // Define the type for children here
+    SafeAreaProvider: ({ children }: { children: ReactNode }) => children,
+    SafeAreaConsumer: (
+      { children }: { children: (insets: typeof inset) => ReactNode },
+    ) => children(inset),
+    useSafeAreaInsets: () => inset,
+    useSafeAreaFrame: () => ({ x: 0, y: 0, width: 390, height: 844 }),
+    initialWindowMetrics: {
+      fallback: false,
+      frame: { x: 0, y: 0, width: 390, height: 844 },
+      insets: inset,
+    },
+  };
 });
+
+// Mock for react-native-paper-dates
+jest.mock("react-native-paper-dates", () => ({
+  DatePickerModal: () => null,
+  registerTranslation: jest.fn(),
+  en: {},
+}));
 
 describe("HomeScreen", () => {
   //--------------------//
