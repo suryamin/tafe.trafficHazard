@@ -61,13 +61,14 @@ jobs:
 
       - name: Build Web Version
         run: |
-          # 1. Install dependencies again to ensure expo-router or linking isn't broken
-          npx expo install react-dom react-native-web
+          # 1. Clear any local expo/metro caches that might be sticking around
+          rm -rf .expo
           
-          # 2. Clear cache and export with an explicit PUBLIC_URL
-          npx expo export --platform web --clear
+          # 2. Run the export with the base path set explicitly for the bundler
+          # We use CROSS-ENV style inline setting to ensure it's picked up
+          EXPO_PUBLIC_BASE_PATH=/tafe.trafficHazard/ npx expo export --platform web --clear
           
-          # 3. Fix the 404 redirect for refreshing the page
+          # 3. Create the 404.html for routing support
           cp dist/index.html dist/404.html
         env:
           NODE_ENV: production
