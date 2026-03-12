@@ -56,22 +56,19 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          # 1. Build the app for web
-          EXPO_USE_STATIC=false npx expo export --platform web --clear
-
-          # 2. Fix the HTML script tags (Using relative paths for GH Pages)
-          # This ensures the browser looks for files in ./ instead of /
-          sed -i 's|src="/_expo|src="./_expo|g' dist/index.html
-          sed -i 's|href="/_expo|href="./_expo|g' dist/index.html
-
-          # 3. Fix Asset Paths in the JS bundles
-          # This helps images and scripts load correctly on a sub-path URL
-          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"./assets/|g' @ || true
-          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"./_expo/static/assets/|g' @ || true
-
-          # 4. Deployment preparation
+          # 1. Build with the explicit base path for your repo
+          # This replaces the need for most of your sed commands
+          npx expo export --platform web --clear --output-dir dist
+          
+          # 2. Add the .nojekyll file to stop GitHub from ignoring _expo folders
           touch dist/.nojekyll
+          
+          # 3. Create a 404.html from index.html to support SPA routing
           cp dist/index.html dist/404.html
+
+          # 4. Optional: Only use sed if the index.html still has an absolute root slash
+          sed -i 's|src="/|src="./|g' dist/index.html
+          sed -i 's|href="/|href="./|g' dist/index.html
           
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4

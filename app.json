@@ -28,6 +28,9 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "experiments": {
+      "baseUrl": "/tafe.trafficHazard"
+    }
   }
 }
