@@ -46,7 +46,7 @@ jobs:
           cache: "npm"
 
       - name: Install Dependencies
-        run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --ignore-scripts
 
       - name: Install Web Dependencies
         run: npm install react-dom react-native-web --save
