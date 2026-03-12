@@ -112,12 +112,34 @@ jest.mock("react-native-safe-area-context", () => {
   };
 });
 
-// Mock for react-native-paper-dates
+// --- 7. Mock for react-native-paper-dates
 jest.mock("react-native-paper-dates", () => ({
   DatePickerModal: () => null,
   registerTranslation: jest.fn(),
   en: {},
 }));
+
+// ---8. mock PaperProvider
+jest.mock("react-native-paper", () => {
+  const React = require("react");
+  return {
+    // Mock the Provider as a simple View
+    PaperProvider: ({ children }: { children: React.ReactNode }) =>
+      React.createElement("View", { testID: "paper-provider" }, children),
+
+    // Mock the Button so it still renders its text
+    Button: ({ children, onPress, style }: any) =>
+      React.createElement(
+        "TouchableOpacity",
+        { onPress, style, testID: "paper-button" },
+        children,
+      ),
+
+    // If you use other Paper components, add them here as simple Views
+    Portal: ({ children }: any) => children,
+    Modal: ({ children }: any) => children,
+  };
+});
 
 describe("HomeScreen", () => {
   //--------------------//
