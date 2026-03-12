@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - "github-action"
+      - "github_action"
   workflow_dispatch: # Allows you to run it manually from the Actions tab
 
 jobs:
