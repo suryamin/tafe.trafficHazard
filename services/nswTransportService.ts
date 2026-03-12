@@ -13,8 +13,12 @@ import axios from "axios";
 import { TrafficHazardFeature } from "../models/trafficHazardFeatureModel";
 //------------------------------------------------------------//
 
-const SUPABASE_ANON_KEY = `sb_publishable_u5NU_wiNoDX72v_uW-p3Kw_-jywt0ue`;
-const FUNCTION_URL = `https://frlpitizjnrfvrrysowg.supabase.co/functions/v1/get-hazard`;
+// const SUPABASE_ANON_KEY = `sb_publishable_u5NU_wiNoDX72v_uW-p3Kw_-jywt0ue`;
+// const FUNCTION_URL =
+//   `https://frlpitizjnrfvrrysowg.supabase.co/functions/v1/get-hazard`;
+const SUPABASE_ANON_KEY = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
+const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
+const FUNCTION_URL = `${SUPABASE_URL}/functions/v1/get-hazard`;
 
 export class NswTransportService {
   static fetchTrafficHazardApi = async (
@@ -25,15 +29,25 @@ export class NswTransportService {
     try {
       const type = hazardType.toLowerCase().trim();
 
-      const params: any = { 
+      const params: any = {
         hazardType: type,
-        region: region 
+        region: region,
       };
 
+      // const response = await axios.get(FUNCTION_URL, {
+      //   headers: {
+      //     "apikey": SUPABASE_ANON_KEY,
+      //     "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      //     "Accept": "application/json",
+      //   },
+      //   params,
+      //   timeout: 15000,
+      // });
       const response = await axios.get(FUNCTION_URL, {
         headers: {
-          Authorization: `apikey ${SUPABASE_ANON_KEY}`,
-          Accept: "application/json",
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+          "Accept": "application/json",
           "User-Agent": "MyTrafficApp/1.0",
         },
         params,

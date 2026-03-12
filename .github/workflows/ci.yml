@@ -48,8 +48,13 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Build Web
+        env:
+          # These must match the names in your GitHub Repo Secrets
+          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           # 1. Build the app (generates the dist folder)
+          # The env variables above are injected into the JS bundle here
           EXPO_USE_STATIC=false npx expo export --platform web --clear
 
           # 2. Fix the HTML script tags in index.html (Injecting tafe.trafficHazard)
