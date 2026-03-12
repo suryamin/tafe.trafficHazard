@@ -7,7 +7,8 @@
 // npm    : react-native-dropdown-picker              //
 //          @expo/vector-icons                        //
 //          react-native-modal-datetime-picker        //
-//          npx expo install react-native-paper react-native-paper-dates
+//          npx expo install react-native-paper       //
+//          react-native-paper-dates                  //
 //----------------------------------------------------//
 
 import React, { useCallback, useState } from "react";
@@ -263,22 +264,6 @@ export const HomeScreen = () => {
 
           {/* ---date time picker--- */}
 
-          {
-            /* <View style={styles.inputGroup}>
-          <Text style={styles.label}>Select Date & Time</Text>
-
-          <TouchableOpacity style={styles.dateButton} onPress={showDatePicker}>
-            <Text style={styles.dateText}>{selectedDate.toLocaleString()}</Text>
-          </TouchableOpacity>
-
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="datetime"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-        </View> */
-          }
           <View style={[styles.inputGroup, { zIndex: 1000 }]}>
             <Text style={styles.label}>Select Date</Text>
 
