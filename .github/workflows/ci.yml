@@ -61,16 +61,19 @@ jobs:
 
       - name: Build Web Version
         run: |
-          # Ensure expo-router is present if Metro is looking for it
-          npx expo install expo-router react-native-safe-area-context react-native-screens
+          # 1. Install dependencies again to ensure expo-router or linking isn't broken
+          npx expo install react-dom react-native-web
           
-          # Export with the --clear flag to prevent stale cache issues
+          # 2. Clear cache and export with an explicit PUBLIC_URL
           npx expo export --platform web --clear
           
-          # Fix for SPA routing on GitHub Pages
+          # 3. Fix the 404 redirect for refreshing the page
           cp dist/index.html dist/404.html
         env:
+          NODE_ENV: production
+          # We provide both just to be safe with different Expo versions
           EXPO_PUBLIC_BASE_PATH: /tafe.trafficHazard/
+          PUBLIC_URL: /tafe.trafficHazard/
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
