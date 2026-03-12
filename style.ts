@@ -197,21 +197,34 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
   },
-  datePickerContainer: {
-    zIndex: 1000, // Crucial for Web to stay above the map
-    elevation: 5, // For Android shadows
-    width: "90%", // Adjust based on your UI
-    alignSelf: "center",
-    marginVertical: 10,
-  },
-  dateButton: {
-    backgroundColor: "#007AFF",
-    padding: 12,
-    borderRadius: 8,
+  datePickerButton: {
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "white", // Matches dropdown background
+    borderWidth: 1, // Matches dropdown border width
+    borderColor: "#CCCCCC", // Standard neutral border color
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 5,
+    minHeight: 50, // Ensures height matches DropDownPicker
   },
-  dateText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
+
+  // New style for the web input container to match mobile
+  webDateInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: "#CCCCCC",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginTop: 5,
+  },
+
+  // Helper for text inside the date button
+  dateButtonText: {
+    fontSize: 16,
+    color: "#333333",
+    marginLeft: 10,
   },
 });
