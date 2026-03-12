@@ -1,9 +1,9 @@
 name: Test and Deploy Web
 
 on:
-  pull_request:
-    branches: [main, github-action]
   push:
+    branches: [main, github-action]
+  pull_request:
     branches: [main]
 
 jobs:
@@ -22,14 +22,6 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Run Linting
-        run: |
-          if [ -f "./node_modules/.bin/eslint" ]; then
-            ./node_modules/.bin/eslint . || true
-          else
-            echo "ESLint not found, skipping..."
-          fi
-
       - name: Run Unit Tests
         run: npm test --if-present
         env:
@@ -39,7 +31,6 @@ jobs:
   deploy-web:
     needs: test-and-lint
     runs-on: ubuntu-latest
-    # Updated to allow deployment from both main and your github-action branch
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/github-action')
     permissions:
       contents: write
@@ -56,24 +47,25 @@ jobs:
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Install Expo Web Dependencies
-        run: npx expo install react-dom react-native-web
-
-      - name: Build Web Version
+      - name: Build Web
         run: |
-          # 1. Nuke old builds
-          rm -rf .expo dist
+          # 1. Build the app (generates the dist folder)
+          EXPO_USE_STATIC=false npx expo export --platform web --clear
+
+          # 2. Fix the HTML script tags in index.html (Injecting tafe.trafficHazard)
+          sed -i 's|src="/_expo|src="/tafe.trafficHazard/_expo|g' dist/index.html
+          sed -i 's|href="/_expo|href="/tafe.trafficHazard/_expo|g' dist/index.html
+
+          # 3. FIX THE ASSETS (Path A: Standard Assets)
+          grep -rli '"/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/assets/|"/tafe.trafficHazard/assets/|g' @ || true
+
+          # 4. FIX THE ASSETS (Path B: Static Assets)
+          grep -rli '"/_expo/static/assets/' dist/_expo/static/js/web/ | xargs -I@ sed -i 's|"/_expo/static/assets/|"/tafe.trafficHazard/_expo/static/assets/|g' @ || true
+
+          # 5. CRITICAL: Prevent GitHub from hiding the _expo folder
+          touch dist/.nojekyll
           
-          # 2. Export with NO base path (defaults to /)
-          npx expo export --platform web --clear
-          
-          # 3. Aggressive Path Fix: 
-          # This removes ANY leading slash from src= or href= attributes
-          # so they become relative to the current folder.
-          sed -i 's/src="\//src="/g' dist/index.html
-          sed -i 's/href="\//href="/g' dist/index.html
-          
-          # 4. Create the 404 redirect
+          # 6. Create 404 redirect for SPA support
           cp dist/index.html dist/404.html
 
       - name: Deploy to GitHub Pages
@@ -82,5 +74,4 @@ jobs:
           folder: dist
           branch: gh-pages
           token: ${{ secrets.GITHUB_TOKEN }}
-          single-commit: true 
-          clean: true
+          single-commit: true
