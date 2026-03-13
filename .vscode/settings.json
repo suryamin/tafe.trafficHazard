@@ -24,5 +24,7 @@
   "editor.defaultFormatter": "denoland.vscode-deno",
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  },
+  "window.zoomLevel": 1,
+  "editor.fontSize": 15
 }
