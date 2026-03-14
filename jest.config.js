@@ -7,7 +7,7 @@
 // use    : test runner config                       //
 //---------------------------------------------------//
 
-module.exports = {
+export default {
   preset: "jest-expo",
   setupFilesAfterEnv: ["./jest.setup.js"], // Tells Jest to run your setup file
   transformIgnorePatterns: [
