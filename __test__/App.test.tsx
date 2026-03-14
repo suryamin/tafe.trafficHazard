@@ -21,7 +21,7 @@ import App from "../App";
 //---mockup---//
 //------------//
 
-// 1. Mock the Screens so we don't render their complex logic
+// 1. Mock the Screens
 jest.mock("../HomeUI", () => {
   const { View, Text } = require("react-native");
   // Add props here to be safe

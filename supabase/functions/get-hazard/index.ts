@@ -8,7 +8,7 @@
 //          and nsw transport api                    //
 //---------------------------------------------------//
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { serve } from "std/http/server.ts";
 
 //------------------------------------------------------------//
 
@@ -17,6 +17,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+// Define a simple interface to replace 'any'
+interface HazardFeature {
+  properties: {
+    region?: string;
+    [key: string]: unknown;
+  };
+  [key: string]: unknown;
+}
 
 export const translateRegion = (rawRegion: string): string => {
   const region = rawRegion?.toUpperCase() || "";
@@ -51,7 +60,7 @@ serve(async (req: Request) => {
     const data = await response.json();
 
     if (data.features) {
-      data.features = data.features.map((feature: any) => {
+      data.features = data.features.map((feature: HazardFeature) => {
         const rawRegion = feature.properties?.region || "";
         // FIX: You must assign the result to the property!
         feature.properties.region = translateRegion(rawRegion);
@@ -63,8 +72,9 @@ serve(async (req: Request) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), {
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

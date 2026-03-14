@@ -8,8 +8,8 @@
 //---------------------------------------------------//
 
 import React, { useState } from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
-import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons";
 //------------------------------------------------------------//
 import { HelperService } from "../services/helperService";
@@ -69,8 +69,7 @@ export const TrafficHazardList = () => {
     //---if incident subtype---//
     //---get mapping from getCategoryIcon---//
     //---otherwise default mapping from hazardEnumUtils---//
-    const isIncident =
-      main.includes("incident") ||
+    const isIncident = main.includes("incident") ||
       icon.includes("incident") ||
       icon.includes("crash") ||
       icon.includes("breakdown") ||
@@ -78,14 +77,14 @@ export const TrafficHazardList = () => {
 
     const ui = isIncident
       ? HelperService.getCategoryIcon(
-          props.mainCategory || "",
-          props.CategoryIcon || "",
-        )
+        props.mainCategory || "",
+        props.CategoryIcon || "",
+      )
       : hazardEnumUtils || {
-          label: props.mainCategory || "Traffic Hazard",
-          icon: "warning",
-          color: "#D32F2F",
-        };
+        label: props.mainCategory || "Traffic Hazard",
+        icon: "warning",
+        color: "#D32F2F",
+      };
 
     return (
       <TouchableOpacity
@@ -107,12 +106,6 @@ export const TrafficHazardList = () => {
               {ui.label}
             </Text>
           </View>
-          {/* {fromStorage && (
-            <TouchableOpacity onPress={() => handleDelete(item.id)}>
-              <MaterialIcons name="delete" size={22} color="#D32F2F" />
-            </TouchableOpacity>
-          )} */}
-
           {fromStorage && (
             <TouchableOpacity
               testID="delete-button" // <--- Add this

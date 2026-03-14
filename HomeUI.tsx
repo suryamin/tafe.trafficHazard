@@ -258,23 +258,6 @@ export const HomeScreen = () => {
         </View>
 
         {/* ---date time picker--- */}
-        {
-          /* <View style={styles.inputGroup}>
-          <Text style={styles.label}>Select Date & Time</Text>
-
-          <TouchableOpacity style={styles.dateButton} onPress={showDatePicker}>
-            <Text style={styles.dateText}>{selectedDate.toLocaleString()}</Text>
-          </TouchableOpacity>
-
-          <DateTimePickerModal
-            isVisible={isDatePickerVisible}
-            mode="datetime"
-            onConfirm={handleConfirm}
-            onCancel={hideDatePicker}
-          />
-        </View> */
-        }
-
         <View style={[styles.inputGroup, { zIndex: 1000 }]}>
           <Text style={styles.label}>Select Date</Text>
 

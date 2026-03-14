@@ -15,6 +15,18 @@ export class HelperService {
   //------------------------//
   // only use in this class //
   //------------------------//
+  private static readonly mainHazardMap: Record<string, categoryIcon> = {
+    fire: { label: "Fire", icon: "local-fire-department", color: "#D32F2F" },
+    flood: { label: "Flood", icon: "water", color: "#1976D2" },
+    roadwork: { label: "Roadwork", icon: "construction", color: "#F57C00" },
+    majorevent: { label: "Major Event", icon: "event", color: "#1976D2" },
+    incident: { label: "Incident", icon: "warning", color: "#D32F2F" },
+    alpine: { label: "Alpine", icon: "terrain", color: "#4CAF50" },
+  };
+
+  //------------------------//
+  // only use in this class //
+  //------------------------//
   private static readonly incidentSubMap: Record<string, categoryIcon> = {
     Crash: { label: "Crash", icon: "directions-car", color: "#D32F2F" },
     Breakdown: { label: "Breakdown", icon: "build", color: "#F57C00" },
@@ -26,18 +38,6 @@ export class HelperService {
     },
     TrafficSignals: { label: "Signals", icon: "traffic", color: "#D32F2F" },
     AdverseWeather: { label: "Weather", icon: "cloud", color: "#607D8B" },
-  };
-
-  //------------------------//
-  // only use in this class //
-  //------------------------//
-  private static readonly mainHazardMap: Record<string, categoryIcon> = {
-    fire: { label: "Fire", icon: "local-fire-department", color: "#D32F2F" },
-    flood: { label: "Flood", icon: "water", color: "#1976D2" },
-    roadwork: { label: "Roadwork", icon: "construction", color: "#F57C00" },
-    majorevent: { label: "Major Event", icon: "event", color: "#1976D2" },
-    incident: { label: "Incident", icon: "warning", color: "#D32F2F" },
-    alpine: { label: "Alpine", icon: "terrain", color: "#4CAF50" },
   };
 
   //---------------//

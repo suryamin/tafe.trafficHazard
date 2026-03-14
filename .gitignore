@@ -40,8 +40,3 @@ yarn-error.*
 /ios
 /android
 
-# Ignore the folder
-server/
-
-# But don't ignore this specific file inside it
-!/server/generateDataModel.node.ts
