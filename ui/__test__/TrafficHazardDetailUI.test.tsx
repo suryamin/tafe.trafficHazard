@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------//
 
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import { fireEvent, render, waitFor } from "@testing-library/react-native";
 import { useRoute } from "@react-navigation/native";
 import { StorageService } from "../../services/storageService";
 import { GeocodingService } from "../../services/geocodingService";
@@ -109,12 +109,12 @@ describe("TrafficHazardDetail Component", () => {
     });
   });
 
-  it("falls back to mainCategory when displayName is missing", () => {
+  it("falls back to mainCategory when displayName is missing", async () => { // added async
     const hazardNoDisplay = {
       ...mockHazard,
       properties: {
         ...mockHazard.properties,
-        displayName: "", // Clear displayName
+        displayName: "",
         mainCategory: "Traffic Incident",
       },
     };
@@ -124,11 +124,12 @@ describe("TrafficHazardDetail Component", () => {
 
     const { getByText } = render(<TrafficHazardDetail />);
 
-    // Now it should show the label from your HazardTypeMap
-    expect(getByText(/Traffic Incident/)).toBeTruthy();
+    // Use findByText to wait for the component to settle
+    const category = await waitFor(() => getByText(/Traffic Incident/));
+    expect(category).toBeTruthy();
   });
 
-  it("correctly handles missing suburb gracefully", () => {
+  it("correctly handles missing suburb gracefully", async () => { // added async
     const hazardNoSuburb = {
       ...mockHazard,
       properties: { ...mockHazard.properties, roads: [] },
@@ -139,9 +140,11 @@ describe("TrafficHazardDetail Component", () => {
 
     const { queryByText, getAllByText } = render(<TrafficHazardDetail />);
 
-    expect(queryByText(/SYDNEY/)).toBeNull();
+    // Wait for the async initialization to finish so the state updates don't "leak"
+    await waitFor(() => {
+      expect(queryByText(/SYDNEY/)).toBeNull();
+    });
 
-    // FIX 2: If multiple elements exist, use getAllByText and check the length
     expect(getAllByText(/Major Crash/).length).toBeGreaterThan(0);
   });
 });
