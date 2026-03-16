@@ -65,19 +65,34 @@ export const HomeScreen = () => {
   const [hazards, setHazards] = useState<TrafficHazardFeature[]>([]);
 
   //---initial---//
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     const loadStoredHazards = async () => {
+  //       try {
+  //         const storedHazards = await StorageService.loadHazard();
+  //         if (storedHazards && Array.isArray(storedHazards)) {
+  //           setHazards(storedHazards);
+  //         } else {
+  //           setHazards([]);
+  //         }
+  //         setSelectedDate(new Date());
+  //       } catch (error) {
+  //         console.error("Failed to load hazards:", error);
+  //         setHazards([]);
+  //       }
+  //     };
+  //     loadStoredHazards();
+  //   }, []),
+  // );
+
   useFocusEffect(
     useCallback(() => {
       const loadStoredHazards = async () => {
         try {
           const storedHazards = await StorageService.loadHazard();
-          if (storedHazards && Array.isArray(storedHazards)) {
-            setHazards(storedHazards);
-          } else {
-            setHazards([]);
-          }
+          setHazards(Array.isArray(storedHazards) ? storedHazards : []);
           setSelectedDate(new Date());
         } catch (error) {
-          console.error("Failed to load hazards:", error);
           setHazards([]);
         }
       };
@@ -132,42 +147,80 @@ export const HomeScreen = () => {
   };
 
   //---execute (submit)---//
-  const handleCheckHazards = async () => {
-    setLoading(true);
-    try {
-      //---checking---//
-      // console.log("Region:", selectedRegion);
-      // console.log("Hazard:", selectedHazard);
-      // console.log("Date:", selectedDate);
+  // const handleCheckHazards = async () => {
+  //   setLoading(true);
+  //   try {
+  //     //---checking---//
+  //     // console.log("Region:", selectedRegion);
+  //     // console.log("Hazard:", selectedHazard);
+  //     // console.log("Date:", selectedDate);
 
-      //---fetch trafficHazard from api---//
+  //     //---fetch trafficHazard from api---//
+  //     const features = await NswTransportService.fetchTrafficHazardApi(
+  //       selectedRegion,
+  //       selectedHazard,
+  //       selectedDate,
+  //     );
+
+  //     //---when no hazards returned---//
+  //     if (!features || features.length === 0) {
+  //       Alert.alert(
+  //         "No Data",
+  //         `No ${
+  //           HazardTypeMap[selectedHazard].label
+  //         } hazards found in ${selectedRegion}.`,
+  //       );
+  //       return;
+  //     }
+
+  //     //---navigate to trafficHazardListUI---//
+  //     navigation.navigate("HazardList", {
+  //       hazards: features,
+  //       fromStorage: false,
+  //     });
+  //   } catch (err) {
+  //     console.error("Fetch failed:", err);
+  //     Alert.alert("Error", "Failed to connect to TfNSW. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleCheckHazards = async () => {
+    // 1. Close dropdowns to clear Safari's z-index layers
+    setRegionOpen(false);
+    setHazardOpen(false);
+
+    setLoading(true);
+
+    try {
       const features = await NswTransportService.fetchTrafficHazardApi(
         selectedRegion,
         selectedHazard,
         selectedDate,
       );
 
-      //---when no hazards returned---//
       if (!features || features.length === 0) {
+        setLoading(false);
         Alert.alert(
           "No Data",
-          `No ${
-            HazardTypeMap[selectedHazard].label
-          } hazards found in ${selectedRegion}.`,
+          `No ${HazardTypeMap[selectedHazard].label} found.`,
         );
         return;
       }
 
-      //---navigate to trafficHazardListUI---//
-      navigation.navigate("HazardList", {
-        hazards: features,
-        fromStorage: false,
-      });
-    } catch (err) {
-      console.error("Fetch failed:", err);
-      Alert.alert("Error", "Failed to connect to TfNSW. Please try again.");
-    } finally {
+      // 2. Navigation Fix: Use a tiny timeout for Safari/Firefox
+      // This ensures 'loading' state and 'dropdown' layers are cleared before transition
       setLoading(false);
+      setTimeout(() => {
+        navigation.navigate("HazardList", {
+          hazards: features,
+          fromStorage: false,
+        });
+      }, 100);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert("Error", "Failed to connect to TfNSW.");
     }
   };
 
@@ -239,6 +292,9 @@ export const HomeScreen = () => {
             setOpen={setRegionOpen}
             setValue={setSelectedRegion}
             listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
             autoScroll={true}
             dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
             style={styles.dropdown}
@@ -261,6 +317,9 @@ export const HomeScreen = () => {
             setValue={setSelectedHazard}
             style={styles.dropdown}
             listMode="SCROLLVIEW"
+            scrollViewProps={{
+              nestedScrollEnabled: true,
+            }}
             autoScroll={true}
             dropDownContainerStyle={[styles.dropdownList, { zIndex: 3000 }]}
             placeholder="Select Hazard"

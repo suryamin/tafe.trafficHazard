@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from "react-native";
+import { Dimensions, Platform, StyleSheet } from "react-native";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -6,6 +6,15 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#F2F2F7",
+    ...Platform.select({
+      web: {
+        // Fixes Safari/Firefox scroll lock
+        overflowY: "auto" as any,
+        WebkitOverflowScrolling: "touch" as any,
+        touchAction: "pan-y" as any,
+        height: "100vh" as any,
+      },
+    }),
   },
   content: {
     padding: 20,
@@ -80,7 +89,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    cursor: "pointer",
     backgroundColor: "#007AFF",
     height: 55,
     borderRadius: 12,
@@ -94,6 +102,11 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     // Elevation for Android
     elevation: 4,
+    ...Platform.select({
+      web: {
+        cursor: "pointer" as any,
+      },
+    }),
   },
   buttonDisabled: {
     backgroundColor: "#A2C2E8",
