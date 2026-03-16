@@ -147,80 +147,42 @@ export const HomeScreen = () => {
   };
 
   //---execute (submit)---//
-  // const handleCheckHazards = async () => {
-  //   setLoading(true);
-  //   try {
-  //     //---checking---//
-  //     // console.log("Region:", selectedRegion);
-  //     // console.log("Hazard:", selectedHazard);
-  //     // console.log("Date:", selectedDate);
-
-  //     //---fetch trafficHazard from api---//
-  //     const features = await NswTransportService.fetchTrafficHazardApi(
-  //       selectedRegion,
-  //       selectedHazard,
-  //       selectedDate,
-  //     );
-
-  //     //---when no hazards returned---//
-  //     if (!features || features.length === 0) {
-  //       Alert.alert(
-  //         "No Data",
-  //         `No ${
-  //           HazardTypeMap[selectedHazard].label
-  //         } hazards found in ${selectedRegion}.`,
-  //       );
-  //       return;
-  //     }
-
-  //     //---navigate to trafficHazardListUI---//
-  //     navigation.navigate("HazardList", {
-  //       hazards: features,
-  //       fromStorage: false,
-  //     });
-  //   } catch (err) {
-  //     console.error("Fetch failed:", err);
-  //     Alert.alert("Error", "Failed to connect to TfNSW. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleCheckHazards = async () => {
-    // 1. Close dropdowns to clear Safari's z-index layers
-    setRegionOpen(false);
-    setHazardOpen(false);
-
     setLoading(true);
-
     try {
+      //---checking---//
+      // console.log("Region:", selectedRegion);
+      // console.log("Hazard:", selectedHazard);
+      // console.log("Date:", selectedDate);
+
+      //---fetch trafficHazard from api---//
       const features = await NswTransportService.fetchTrafficHazardApi(
         selectedRegion,
         selectedHazard,
         selectedDate,
       );
 
+      //---when no hazards returned---//
       if (!features || features.length === 0) {
-        setLoading(false);
         Alert.alert(
           "No Data",
-          `No ${HazardTypeMap[selectedHazard].label} found.`,
+          `No ${
+            HazardTypeMap[selectedHazard].label
+          } hazards found in ${selectedRegion}.`,
         );
         return;
       }
 
-      // 2. Navigation Fix: Use a tiny timeout for Safari/Firefox
-      // This ensures 'loading' state and 'dropdown' layers are cleared before transition
-      setLoading(false);
-      setTimeout(() => {
-        navigation.navigate("HazardList", {
-          hazards: features,
-          fromStorage: false,
-        });
-      }, 100);
+      //---navigate to trafficHazardListUI---//
+      navigation.navigate("HazardList", {
+        hazards: features,
+        fromStorage: false,
+      });
     } catch (err) {
+      console.error("Fetch failed:", err);
+      Alert.alert("Error", "Failed to connect to TfNSW. Please try again.");
+    } finally {
       setLoading(false);
-      Alert.alert("Error", "Failed to connect to TfNSW.");
     }
   };
 

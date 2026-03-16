@@ -138,23 +138,25 @@ describe("HomeScreen", () => {
   });
 
   it("shows an alert if the API returns no hazards", async () => {
-  // Mock API returning empty list
-  (NswTransportService.fetchTrafficHazardApi as jest.Mock).mockResolvedValue([]);
-
-  const { getByText } = render(<HomeScreen />);
-
-  const submitBtn = getByText("Check Hazards");
-  fireEvent.press(submitBtn);
-
-  await waitFor(() => {
-    // We use a Regex to match the core message since the middle word 
-    // changes based on the selected hazard type.
-    expect(Alert.alert).toHaveBeenCalledWith(
-      "No Data",
-      expect.stringMatching(/No .* found/i) 
+    // Mock API returning empty list
+    (NswTransportService.fetchTrafficHazardApi as jest.Mock).mockResolvedValue(
+      [],
     );
+
+    const { getByText } = render(<HomeScreen />);
+
+    const submitBtn = getByText("Check Hazards");
+    fireEvent.press(submitBtn);
+
+    await waitFor(() => {
+      // We use a Regex to match the core message since the middle word
+      // changes based on the selected hazard type.
+      expect(Alert.alert).toHaveBeenCalledWith(
+        "No Data",
+        expect.stringMatching(/No .* found/i),
+      );
+    });
   });
-});
 
   it("handles clearing storage and updates the UI", async () => {
     (StorageService.clearAll as jest.Mock).mockResolvedValue(undefined);
