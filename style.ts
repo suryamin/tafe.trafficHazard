@@ -80,6 +80,7 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
+    cursor: "pointer",
     backgroundColor: "#007AFF",
     height: 55,
     borderRadius: 12,

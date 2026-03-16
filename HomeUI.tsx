@@ -222,7 +222,10 @@ export const HomeScreen = () => {
         </View>
 
         {/* ---region dropdown--- */}
-        <View style={[styles.inputGroup, { zIndex: 3000 }]}>
+        <View
+          style={[styles.inputGroup, { zIndex: 3000 }]}
+          pointerEvents={regionOpen ? "auto" : "box-none"}
+        >
           <Text style={styles.label}>NSW Region</Text>
           <DropDownPicker
             open={regionOpen}
@@ -240,7 +243,10 @@ export const HomeScreen = () => {
         </View>
 
         {/* ---hazard dropdown--- */}
-        <View style={[styles.inputGroup, { zIndex: 2000 }]}>
+        <View
+          style={[styles.inputGroup, { zIndex: 2000 }]}
+          pointerEvents={regionOpen ? "auto" : "box-none"}
+        >
           <Text style={styles.label}>Hazard Type</Text>
           <DropDownPicker
             open={hazardOpen}
