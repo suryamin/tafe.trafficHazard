@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -171,7 +172,11 @@ export const HomeScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }} // Ensures content stretches
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.content}>
         {/* ---header--- */}
         <Text style={styles.headerTitle}>NSW Traffic Hazard</Text>
@@ -329,6 +334,6 @@ export const HomeScreen = () => {
             : <Text style={styles.buttonText}>Check Hazards</Text>}
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 };
